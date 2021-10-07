@@ -1,0 +1,17 @@
+{
+  "name": "parakeet-db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "knex": "^0.21.18",
+    "pg": "^8.5.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "migrate": "node src/migrate.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
