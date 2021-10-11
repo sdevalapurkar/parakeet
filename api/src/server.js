@@ -1,6 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const knex = require("knex");
+const registerUser = require("./paths/register");
+const loginUser = require("./paths/login");
 
 const db = knex({
   client: "postgres",
@@ -15,6 +17,8 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.use(morgan("dev"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ type: "application/json" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Enable CORS
@@ -36,6 +40,16 @@ app.use((req, res, next) => {
 // Root endpoint (health check)
 app.get("/", (req, res) => {
   res.send("Welcome to the Parakeet API!");
+});
+
+// Register as a new user
+app.post("/v1/register", async (req, res) => {
+  return registerUser(req, res, db);
+});
+
+// Login as an existing user
+app.post("/v1/login", async (req, res) => {
+  return loginUser(req, res, db);
 });
 
 // API is listening and server is up
