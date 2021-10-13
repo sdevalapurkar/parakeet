@@ -34,6 +34,8 @@ const db = knex({
         .inTable("users");
       table.string("goal_name");
       table.integer("goal_times");
+      table.datetime('goal_start_date');
+      table.datetime('goal_end_date');
       table.timestamps();
     });
     console.log("Created goals table!");

@@ -46,7 +46,7 @@ services:
   db-setup:
     build:
       context: ./db
-      dockerfile: Dockerfile.setup
+      dockerfile: Dockerfile
     container_name: db-setup
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
