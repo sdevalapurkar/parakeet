@@ -2,79 +2,33 @@ import {
   Box,
   Button,
   Typography,
-  AppBar,
-  Toolbar,
-  Divider,
   TableContainer,
   Table,
   TableHead,
   TableCell,
   TableBody,
   TableRow,
-  Paper
+  Paper,
+  IconButton,
+  Link
 } from '@material-ui/core';
 import Icon from '@mdi/react';
 import { isAuthenticated } from '../helpers/authenticationHelper';
-import jwt from "jsonwebtoken";
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import { mdiAccountCircle, mdiLogoutVariant } from '@mdi/js';
-import parakeetImage from '../images/parakeet-pic.png';
+import RegisterLogin from './RegisterLogin';
+import { mdiTrashCanOutline } from '@mdi/js';
 import { useState, useEffect } from 'react';
 import axios from "axios";
+import { useHistory } from 'react-router';
 import moment from "moment";
 import NewGoalDialog from './NewGoalDialog';
+import CircularProgressWithLabel from './CircularProgressWithLabel';
+import Header from './Header';
 
-const useStyles = makeStyles((theme) => ({
-  govHeader: {
-    borderBottom: '2px solid #00a152'
-  },
-  govHeaderToolbar: {
-    height: '70px'
-  },
-  brand: {
-    paddingLeft: '1rem',
-    display: 'flex',
-    flex: '0 0 auto',
-    alignItems: 'center',
-    color: 'inherit',
-    textDecoration: 'none',
-    fontSize: '1.25rem',
-    fontWeight: 700,
-    '& img': {
-      verticalAlign: 'middle'
-    },
-    '& picture': {
-      marginLeft: '1.25rem'
-    },
-    '&:hover': {
-      textDecoration: 'none'
-    },
-    '&:focus': {
-      outlineOffset: '6px'
-    }
-  },
-  userProfile: {
-    color: theme.palette.primary.contrastText,
-    fontSize: '0.9375rem',
-    '& hr': {
-      backgroundColor: '#4b5e7e',
-      height: '1rem'
-    },
-    '& a': {
-      color: 'inherit',
-      textDecoration: 'none'
-    },
-    '& a:hover': {
-      textDecoration: 'underline'
-    }
-  }
-}));
-
-function Homepage(props) {
+function Homepage() {
   const apiHost = process.env.REACT_APP_API_HOST || 'localhost';
   const apiPort = process.env.REACT_APP_API_PORT || '5000';
 
-  const classes = useStyles();
+  const history = useHistory();
 
   const [existingGoals, setExistingGoals] = useState([]);
   const [openNewGoalDialog, setOpenNewGoalDialog] = useState(false);
@@ -83,6 +37,7 @@ function Homepage(props) {
   const [goalStartDate, setGoalStartDate] = useState(null);
   const [goalEndDate, setGoalEndDate] = useState(null);
   const [goalDialogError, setGoalDialogError] = useState('');
+  const [isAuthed, setIsAuthed] = useState(isAuthenticated());
 
   useEffect(() => {
     if (openNewGoalDialog) {
@@ -108,11 +63,6 @@ function Homepage(props) {
     const { value } = response.data.attributes;
 
     setExistingGoals(value);
-  };
-
-  const logoutUser = () => {
-    sessionStorage.removeItem('jwt');
-    props.setIsAuthed(isAuthenticated());
   };
 
   const handleSubmitNewGoal = async () => {
@@ -146,6 +96,11 @@ function Homepage(props) {
     setOpenNewGoalDialog(false);
   };
 
+  const logoutUser = () => {
+    sessionStorage.removeItem('jwt');
+    setIsAuthed(isAuthenticated());
+  };
+
   const getExistingGoalsTable = () => {
     if (!existingGoals.length) {
       return (
@@ -154,7 +109,7 @@ function Homepage(props) {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Times</TableCell>
-              <TableCell>Start Time</TableCell>
+              <TableCell>Start Date</TableCell>
               <TableCell>End Date</TableCell>
             </TableRow>
           </TableHead>
@@ -180,17 +135,35 @@ function Homepage(props) {
               <TableCell>Times</TableCell>
               <TableCell>Start Date</TableCell>
               <TableCell>End Date</TableCell>
+              <TableCell>Progress</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody data-testid="goals-table">
             {existingGoals?.map((row) => (
               <TableRow key={row.id}>
                 <TableCell component="th" scope="row">
-                  {row.goal_name}
+                  <Link underline="always" component="button" variant="body2" onClick={() => history.push(`/goal/${row.id}`)}>
+                    {row.goal_name}
+                  </Link>
                 </TableCell>
                 <TableCell>{row.goal_times}</TableCell>
                 <TableCell>{moment(row.goal_start_date).format('MMM D, YYYY')}</TableCell>
                 <TableCell>{moment(row.goal_end_date).format('MMM D, YYYY')}</TableCell>
+                <TableCell>
+                  <CircularProgressWithLabel value={20} />
+                </TableCell>
+                <TableCell align="right">
+                  <Box my={-1}>
+                    <IconButton
+                      color="primary"
+                      aria-label="delete-goal"
+                      data-testid="delete-goal"
+                      onClick={() => console.log(row)}>
+                      <Icon path={mdiTrashCanOutline} size={1} />
+                    </IconButton>
+                  </Box>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -199,45 +172,15 @@ function Homepage(props) {
     );
   };
 
+  if (!isAuthed) {
+    return (
+      <RegisterLogin setIsAuthed={setIsAuthed} />
+    );
+  }
+
   return (
     <>
-      <AppBar position="sticky" style={{ boxShadow: 'none' }}>
-        <Box className={classes.govHeader}>
-          <Toolbar className={classes.govHeaderToolbar}>
-            <Box display="flex" justifyContent="space-between" width="100%">
-              <Box display="flex">
-                <picture>
-                  <source srcSet={parakeetImage} media="(min-width: 600px)"></source>
-                  <img src={parakeetImage} alt={'Parakeet'} height="30px" />
-                </picture>
-                <span className={classes.brand}>
-                  Parakeet
-                </span>
-              </Box>
-              <Box display="flex" className={classes.userProfile} my="auto" alignItems="center">
-                <Icon path={mdiAccountCircle} size={1.25} />
-                <Box ml={1}>{jwt.decode(sessionStorage.getItem('jwt')).name}</Box>
-                <Box px={2}>
-                  <Divider orientation="vertical" />
-                </Box>
-                <Box display="flex" alignItems="center" my="auto">
-                  <Button
-                    variant="contained"
-                    component="label"
-                    size="medium"
-                    color="primary"
-                    disableElevation
-                    startIcon={<Icon path={mdiLogoutVariant} size={1} />}
-                    onClick={logoutUser}
-                  >
-                    Logout
-                  </Button>
-                </Box>
-              </Box>
-            </Box>
-          </Toolbar>
-        </Box>
-      </AppBar>
+      <Header logoutUser={logoutUser} />
 
       <Box pl="70px" pr="70px" pt={2} pb={2}>
         <Box pb={3} display="flex" justifyContent="space-between">

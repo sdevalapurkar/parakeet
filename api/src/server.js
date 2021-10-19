@@ -5,6 +5,7 @@ const registerUser = require("./paths/register");
 const loginUser = require("./paths/login");
 const addGoal = require("./paths/goal/add");
 const getGoals = require("./paths/goal/get");
+const getGoal = require("./paths/goal/{goalId}/get");
 
 const db = knex({
   client: "postgres",
@@ -61,6 +62,10 @@ app.post("/v1/goals", async (req, res) => {
 
 app.get("/v1/goals", async (req, res) => {
   return getGoals(req, res, db);
+});
+
+app.get("/v1/goals/:goal_id", async (req, res) => {
+  return getGoal(req, res, db);
 });
 
 // API is listening and server is up

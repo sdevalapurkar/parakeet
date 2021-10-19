@@ -1,20 +1,26 @@
-import { useState } from 'react';
-import RegisterLogin from './components/RegisterLogin';
+import {
+  BrowserRouter as Router,
+  Route
+} from "react-router-dom";
+import { Redirect, Switch } from 'react-router';
 import Homepage from './components/Homepage';
-import { isAuthenticated } from './helpers/authenticationHelper';
+import GoalDetails from "./components/GoalDetails";
 
 function App() {
-  const [isAuthed, setIsAuthed] = useState(isAuthenticated());
-
   return (
-    <>
-      {isAuthed && (
-        <Homepage setIsAuthed={setIsAuthed} />
-      )}
-      {!isAuthed && (
-        <RegisterLogin setIsAuthed={setIsAuthed} />
-      )}
-    </>
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <Homepage />
+        </Route>
+        <Redirect exact from="/goal/:goal_id?" to="/goal/:goal_id?/details" />
+        <Route
+          exact
+          path="/goal/:goal_id?/details"
+          component={GoalDetails}
+        />
+      </Switch>
+    </Router>
   );
 }
 
