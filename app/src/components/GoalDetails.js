@@ -93,6 +93,18 @@ function GoalDetails() {
     );
   }
 
+  const getProgressValue = () => {
+    if (!goalDetails.goal_practice_times) {
+      return 0;
+    }
+
+    if (goalDetails.goal_practice_times >= goalDetails.goal_times) {
+      return 100;
+    }
+
+    return (goalDetails.goal_practice_times * 100) / goalDetails.goal_times;
+  };
+
   return (
     <>
       <Header logoutUser={logoutUser} />
@@ -119,7 +131,7 @@ function GoalDetails() {
               <Typography variant="body1"><b>Progress:</b></Typography>
             </Box>
             <CircularProgressWithLabel
-              value={goalDetails.goal_practice_times ? (goalDetails.goal_practice_times * 100) / goalDetails.goal_times : 0}
+              value={getProgressValue()}
             />
             <Box pt={2}>
               {goalDetails.goal_practice_times < goalDetails.goal_times && (
@@ -134,7 +146,7 @@ function GoalDetails() {
                 </Button>
               )}
               {goalDetails.goal_practice_times >= goalDetails.goal_times && (
-                <Typography variant="h6">Congrats! You've completed this goal already.</Typography>
+                <Typography variant="body1">Congrats! You've completed this goal :)</Typography>
               )}
             </Box>
           </Box>

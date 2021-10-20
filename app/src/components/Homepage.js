@@ -101,6 +101,18 @@ function Homepage() {
     setIsAuthed(isAuthenticated());
   };
 
+  const getProgressValue = (goalDetails) => {
+    if (!goalDetails.goal_practice_times) {
+      return 0;
+    }
+
+    if (goalDetails.goal_practice_times >= goalDetails.goal_times) {
+      return 100;
+    }
+
+    return (goalDetails.goal_practice_times * 100) / goalDetails.goal_times;
+  };
+
   const getExistingGoalsTable = () => {
     if (!existingGoals.length) {
       return (
@@ -152,7 +164,7 @@ function Homepage() {
                 <TableCell>{moment(row.goal_end_date).format('MMM D, YYYY')}</TableCell>
                 <TableCell>
                   <CircularProgressWithLabel
-                    value={row.goal_practice_times ? (row.goal_practice_times * 100) / row.goal_times : 0}
+                    value={getProgressValue()}
                   />
                 </TableCell>
                 <TableCell align="right">
