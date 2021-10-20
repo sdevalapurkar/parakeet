@@ -7,6 +7,7 @@ const addGoal = require("./paths/goal/add");
 const getGoals = require("./paths/goal/get");
 const getGoal = require("./paths/goal/{goalId}/get");
 const updateGoalProgress = require("./paths/goal/{goalId}/updateProgress");
+const deleteGoal = require("./paths/goal/{goalId}/delete");
 
 const db = knex({
   client: "postgres",
@@ -71,6 +72,10 @@ app.get("/v1/goals/:goal_id", async (req, res) => {
 
 app.put("/v1/goals/:goal_id/progress", async (req, res) => {
   return updateGoalProgress(req, res, db);
+});
+
+app.delete("/v1/goals/:goal_id", async (req, res) => {
+  return deleteGoal(req, res, db);
 });
 
 // API is listening and server is up

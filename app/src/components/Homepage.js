@@ -65,6 +65,22 @@ function Homepage() {
     setExistingGoals(value);
   };
 
+  const deleteGoal = async (goal) => {
+    const response = await axios.delete(
+      `http://${apiHost}:${apiPort}/v1/goals/${goal.id}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("jwt")}`
+        }
+      }
+    );
+
+    if (!response || !response.data) {
+      return;
+    }
+
+    getExistingGoals();
+  };
+
   const handleSubmitNewGoal = async () => {
     if (!goalName || !goalTimes || !goalStartDate || !goalEndDate) {
       setGoalDialogError('All fields of the form are required. Please fill them out.');
@@ -173,7 +189,7 @@ function Homepage() {
                       color="primary"
                       aria-label="delete-goal"
                       data-testid="delete-goal"
-                      onClick={() => console.log(row)}>
+                      onClick={() => deleteGoal(row)}>
                       <Icon path={mdiTrashCanOutline} size={1} />
                     </IconButton>
                   </Box>
