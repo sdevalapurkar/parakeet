@@ -151,7 +151,9 @@ function Homepage() {
                 <TableCell>{moment(row.goal_start_date).format('MMM D, YYYY')}</TableCell>
                 <TableCell>{moment(row.goal_end_date).format('MMM D, YYYY')}</TableCell>
                 <TableCell>
-                  <CircularProgressWithLabel value={20} />
+                  <CircularProgressWithLabel
+                    value={row.goal_practice_times ? (row.goal_practice_times * 100) / row.goal_times : 0}
+                  />
                 </TableCell>
                 <TableCell align="right">
                   <Box my={-1}>

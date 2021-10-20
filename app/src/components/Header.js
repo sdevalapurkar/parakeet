@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken";
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { mdiAccountCircle, mdiLogoutVariant } from '@mdi/js';
 import parakeetImage from '../images/parakeet-pic.png';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
   govHeader: {
@@ -54,18 +55,22 @@ const useStyles = makeStyles((theme) => ({
     '& a:hover': {
       textDecoration: 'underline'
     }
+  },
+  cursor: {
+    cursor: 'pointer'
   }
 }));
 
 function Header(props) {
   const classes = useStyles();
+  const history = useHistory();
 
   return (
     <AppBar position="sticky" style={{ boxShadow: 'none' }}>
       <Box className={classes.govHeader}>
         <Toolbar className={classes.govHeaderToolbar}>
           <Box display="flex" justifyContent="space-between" width="100%">
-            <Box display="flex">
+            <Box display="flex" className={classes.cursor} onClick={() => history.push('/')}>
               <picture>
                 <source srcSet={parakeetImage} media="(min-width: 600px)"></source>
                 <img src={parakeetImage} alt={'Parakeet'} height="30px" />
