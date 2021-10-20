@@ -164,7 +164,7 @@ function Homepage() {
                 <TableCell>{moment(row.goal_end_date).format('MMM D, YYYY')}</TableCell>
                 <TableCell>
                   <CircularProgressWithLabel
-                    value={getProgressValue()}
+                    value={getProgressValue(row)}
                   />
                 </TableCell>
                 <TableCell align="right">
