@@ -129,6 +129,16 @@ function Homepage() {
     return (goalDetails.goal_practice_times * 100) / goalDetails.goal_times;
   };
 
+  const sortExistingGoals = () => {
+    if (!existingGoals.length) {
+      return [];
+    }
+
+    return existingGoals.sort((a, b) => {
+      return (b.goal_times - b.goal_practice_times) - (a.goal_times - a.goal_practice_times);
+    });
+  };
+
   const getExistingGoalsTable = () => {
     if (!existingGoals.length) {
       return (
@@ -168,7 +178,7 @@ function Homepage() {
             </TableRow>
           </TableHead>
           <TableBody data-testid="goals-table">
-            {existingGoals?.map((row) => (
+            {sortExistingGoals().map((row) => (
               <TableRow key={row.id}>
                 <TableCell component="th" scope="row">
                   <Link underline="always" component="button" variant="body2" onClick={() => history.push(`/goal/${row.id}`)}>
