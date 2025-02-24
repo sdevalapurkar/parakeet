@@ -18,7 +18,7 @@ services:
   app:
     build: ./app
     ports:
-      - '3000:3000'
+      - '3005:3000'
     environment:
       - REACT_APP_SECRET=${API_SECRET}
       - REACT_APP_API_HOST=${API_HOST}
